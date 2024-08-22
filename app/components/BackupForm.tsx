@@ -99,8 +99,7 @@ const BackupForm: React.FC = () => {
         <option value="SCRAM-SHA-256">SCRAM-SHA-256</option>
         <option value="SCRAM-SHA-1">SCRAM-SHA-1</option>
       </select>
-      
-      <button type="submit" className="w-full">Backup</button>
+      <button type="submit" className="btn btn-primary w-full">Backup</button>
     </form>
   );
 };
