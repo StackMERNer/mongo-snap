@@ -37,33 +37,31 @@ const SavedConnections = ({
 
   const handleRename = async (id: string) => {
     try {
-      await axios.put('/api/connections', { id, newName });
+      await axios.put("/api/connections", { id, newName });
       setConnections((prev) =>
-        prev.map((conn) =>
-          conn.id === id ? { ...conn, name: newName } : conn
-        )
+        prev.map((conn) => (conn.id === id ? { ...conn, name: newName } : conn))
       );
-      setNewName('');
+      setNewName("");
       setEditId(null);
     } catch (error) {
-      alert('Failed to rename connection!');
+      alert("Failed to rename connection!");
     }
   };
-  
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete('/api/connections', { data: { id } });
+      await axios.delete("/api/connections", { data: { id } });
       setConnections((prev) => prev.filter((conn) => conn.id !== id));
     } catch (error) {
-      alert('Failed to delete connection!');
+      alert("Failed to delete connection!");
     }
   };
 
   return (
     <div className="p-1">
-      <h2 className="text-xl mb-4">Saved Connections</h2>
-      <div className="flex flex-col gap-2 pl-5">
+      <div className="flex flex-col gap-2 pl-5 py-2 border-r h-full">
+        <h2 className="text-xl mb-4 font-bold">Saved Connections</h2>
+        {!!!connections.length && <div>No saved connection found.</div>}
         {connections.map((conn) => (
           <div key={conn.id} className="card bg-base-100 border">
             <div className="card-body  p-2">
@@ -109,7 +107,12 @@ const SavedConnections = ({
                   >
                     X
                   </button>
-                  <button className="btn btn-primary ml-2" onClick={() => onConnectionSelect(conn)}>use</button>
+                  <button
+                    className="btn btn-primary ml-2"
+                    onClick={() => onConnectionSelect(conn)}
+                  >
+                    use
+                  </button>
                 </div>
               )}
               <div>

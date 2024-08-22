@@ -49,7 +49,7 @@ const BackupForm: React.FC = () => {
           <input
             type="text"
             name="host"
-            placeholder="Host"
+            placeholder="Host : e.g, 198.25.22.111"
             value={formData.host}
             onChange={handleChange}
             className="input input-bordered input-info w-full"
@@ -61,7 +61,6 @@ const BackupForm: React.FC = () => {
             placeholder="Port"
             value={formData.port}
             onChange={handleChange}
-         
             className="input input-bordered input-info w-full"
             required
           />

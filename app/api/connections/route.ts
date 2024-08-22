@@ -43,7 +43,10 @@ export async function POST(request: Request) {
     }
 
     // Add new connection
-    connections.push(connectionData);
+    connections.push({
+      ...connectionData,
+      id: new Date().getTime().toString(),
+    });
 
     // Write updated connections to file
     await fs.writeFile(filePath, JSON.stringify(connections, null, 2));
