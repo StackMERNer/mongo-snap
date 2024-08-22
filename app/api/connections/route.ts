@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const connectionData = await request.json();
-    console.log("connectionData", connectionData);
+
     // Ensure directory exists
     await fs.mkdir(path.dirname(filePath), { recursive: true });
 
@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     connections.push({
       ...connectionData,
       id: new Date().getTime().toString(),
+      name: "New Connection",
     });
 
     // Write updated connections to file

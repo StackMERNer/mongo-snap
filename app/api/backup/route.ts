@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { exec } from "child_process";
+import { promises as fs } from "fs";
 import { promisify } from "util";
+import path from "path";
 
 const execPromise = promisify(exec);
+const localDbPath = path.join(process.cwd(), "localDb", "currentBackup.json");
 
 export async function POST(request: Request) {
   try {
@@ -17,9 +20,15 @@ export async function POST(request: Request) {
       authMechanism,
     } = await request.json();
 
-    const command = `mongodump --host ${host} --port ${port} --db ${db} --out ${outputFolder} --username ${username} --password "${password}" --authenticationDatabase ${authDb} --authenticationMechanism ${authMechanism}`;
+    // Concatenate the database name with the output folder
+    const dbFolderPath = path.join(outputFolder, db);
 
-    // console.log("command", command,outputFolder);
+    // Save the folder path to a file
+    await fs.mkdir(path.dirname(localDbPath), { recursive: true });
+    await fs.writeFile(localDbPath, JSON.stringify({ dbFolderPath }, null, 2));
+
+    // Command for backup
+    const command = `mongodump --host ${host} --port ${port} --db ${db} --out ${dbFolderPath} --username ${username} --password "${password}" --authenticationDatabase ${authDb} --authenticationMechanism ${authMechanism}`;
 
     await execPromise(command);
 

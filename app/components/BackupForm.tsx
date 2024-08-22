@@ -15,21 +15,28 @@ const BackupForm: React.FC = () => {
     outputFolder: "",
     authMechanism: "SCRAM-SHA-256",
   });
-
+  const [isBackingUp, setIsBackingUp] = useState(false);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
+  let intervalId: NodeJS.Timeout;
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsBackingUp(true);
+    setProgressMB(0);
+    intervalId = setInterval(checkProgress, 1000);
     try {
-      const response = await axios.post("/api/backup", formData);
-      alert(response.data.message);
+      await axios.post("/api/backup", formData);
+      clearInterval(intervalId);
+      await checkProgress(true);
+      setIsBackingUp(false);
     } catch (error) {
       alert("Backup failed!");
+      clearInterval(intervalId);
+      setIsBackingUp(false);
     }
   };
   const handleSave = async () => {
@@ -41,6 +48,21 @@ const BackupForm: React.FC = () => {
       alert("Failed to save connection info!");
     }
   };
+
+  const [progressMB, setProgressMB] = useState(0);
+  const checkProgress = async (isCompleted=false) => {
+    try {
+      const response = await axios.get("/api/backup-progress");
+      const sizeInMB = response.data.size / (1024 * 1024);
+      setProgressMB(sizeInMB);
+      if (isCompleted) {
+        setTimeout(() => alert("Backup Complete!"),10);
+      }
+    } catch (error) {
+      console.error("Error checking backup progress:", error);
+    }
+  };
+
   return (
     <div className="grid sm:grid-cols-[1fr,3fr]">
       <SavedConnections onConnectionSelect={(conn) => setFormData(conn)} />
@@ -97,7 +119,6 @@ const BackupForm: React.FC = () => {
             value={formData.authDb}
             placeholder="Authentication Database"
             onChange={handleChange}
-            
             className="input input-bordered input-info w-full"
           />
           <input
@@ -115,20 +136,36 @@ const BackupForm: React.FC = () => {
             value={formData.authMechanism}
             className="select select-primary w-full"
           >
-            <option value="SCRAM-SHA-256" >SCRAM-SHA-256</option>
+            <option value="SCRAM-SHA-256">SCRAM-SHA-256</option>
             <option value="SCRAM-SHA-1">SCRAM-SHA-1</option>
           </select>
+          <div className="flex gap-2 items-center py-2">
+            <button
+              type="button"
+              onClick={handleSave}
+              className="btn btn-secondary w-full "
+            >
+              Save
+            </button>
+            {/* <button type="submit" className="btn btn-primary w-full">
+              Backup
+            </button> */}
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              // disabled={isBackingUp}
+            >
+              {isBackingUp
+                ? `Backing Up... (${progressMB.toFixed(2)}MB)`
+                : !isBackingUp && !!!progressMB
+                ? "Backup"
+                : `Backed up ${progressMB.toFixed(2)} MB`}
+            </button>
+            {isBackingUp && (
+              <p className="text-info">Progress: {progressMB.toFixed(2)}%</p>
+            )}
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={handleSave}
-          className="btn btn-secondary w-full mt-2"
-        >
-          Save
-        </button>
-        <button type="submit" className="btn btn-primary w-full">
-          Backup
-        </button>
       </form>
     </div>
   );
