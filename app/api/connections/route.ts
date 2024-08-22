@@ -1,9 +1,23 @@
-// app/api/saveConnections/route.ts
+// app/api/connections/route.ts
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 
 const filePath = path.join(process.cwd(), "localDb", "connections.json");
+
+export async function GET() {
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    const connections = JSON.parse(data);
+    return NextResponse.json(connections);
+  } catch (error) {
+    console.error("Failed to fetch connections:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch connections!" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -19,7 +33,14 @@ export async function POST(request: Request) {
       connections = JSON.parse(data);
     } catch (error) {
       // File doesn't exist or can't be read, which is fine
-      console.log("File doesn't exist or can't be read, which is fine");
+      // console.log("File doesn't exist or can't be read, which is fine");
+      return NextResponse.json(
+        {
+          message:
+            "Create localDb directory in project's root directory with file connections.json",
+        },
+        { status: 500 }
+      );
     }
 
     // Add new connection
