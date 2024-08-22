@@ -1,22 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import axios from 'axios';
-
+import React, { useState } from "react";
+import axios from "axios";
 
 const BackupForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    host: '',
+    host: "",
     port: 27017,
-    db: '',
-    username: '',
-    password: '',
-    authDb: 'admin',
-    outputFolder: '',
-    authMechanism: 'SCRAM-SHA-256'
+    db: "",
+    username: "",
+    password: "",
+    authDb: "admin",
+    outputFolder: "",
+    authMechanism: "SCRAM-SHA-256",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -24,10 +25,19 @@ const BackupForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/backup', formData);
+      const response = await axios.post("/api/backup", formData);
       alert(response.data.message);
     } catch (error) {
-      alert('Backup failed!');
+      alert("Backup failed!");
+    }
+  };
+  const handleSave = async () => {
+    try {
+      await axios.post("/api/connections", formData);
+      alert("Connection info saved!");
+    } catch (error) {
+        console.log('error',error);
+      alert("Failed to save connection info!");
     }
   };
 
@@ -99,7 +109,16 @@ const BackupForm: React.FC = () => {
         <option value="SCRAM-SHA-256">SCRAM-SHA-256</option>
         <option value="SCRAM-SHA-1">SCRAM-SHA-1</option>
       </select>
-      <button type="submit" className="btn btn-primary w-full">Backup</button>
+      <button
+        type="button"
+        onClick={handleSave}
+        className="btn btn-secondary w-full mt-2"
+      >
+        Save
+      </button>
+      <button type="submit" className="btn btn-primary w-full">
+        Backup
+      </button>
     </form>
   );
 };
