@@ -9,11 +9,13 @@ export async function GET() {
     // Read the current backup folder path from the file
     const data = await fs.readFile(localDbPath, "utf-8");
     const { dbFolderPath } = JSON.parse(data);
+    console.log('dbFolderPath',dbFolderPath);
     // Check if the directory exists
     try {
       await fs.access(dbFolderPath);
     } catch (error) {
       // Directory does not exist
+      // console.log("error", error);
       return NextResponse.json({ size: 0 });
     }
     // Calculate the directory size

@@ -22,13 +22,14 @@ export async function POST(request: Request) {
 
     // Concatenate the database name with the output folder
     const dbFolderPath = path.join(outputFolder, db);
+    const outDir = path.join(outputFolder);
 
     // Save the folder path to a file
     await fs.mkdir(path.dirname(localDbPath), { recursive: true });
     await fs.writeFile(localDbPath, JSON.stringify({ dbFolderPath }, null, 2));
 
     // Command for backup
-    const command = `mongodump --host ${host} --port ${port} --db ${db} --out ${dbFolderPath} --username ${username} --password "${password}" --authenticationDatabase ${authDb} --authenticationMechanism ${authMechanism}`;
+    const command = `mongodump --host ${host} --port ${port} --db ${db} --out ${outDir} --username ${username} --password "${password}" --authenticationDatabase ${authDb} --authenticationMechanism ${authMechanism}`;
 
     await execPromise(command);
 

@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     connections.push({
       ...connectionData,
       id: new Date().getTime().toString(),
-      name: "New Connection",
+      name: connectionData.db,
     });
 
     // Write updated connections to file

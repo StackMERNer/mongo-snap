@@ -53,10 +53,11 @@ const BackupForm: React.FC = () => {
   const checkProgress = async (isCompleted=false) => {
     try {
       const response = await axios.get("/api/backup-progress");
+      console.log('response',response);
       const sizeInMB = response.data.size / (1024 * 1024);
       setProgressMB(sizeInMB);
       if (isCompleted) {
-        setTimeout(() => alert("Backup Complete!"),10);
+        setTimeout(() => alert("Backup Complete!"),1000);
       }
     } catch (error) {
       console.error("Error checking backup progress:", error);
