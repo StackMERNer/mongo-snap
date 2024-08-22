@@ -37,23 +37,26 @@ const SavedConnections = ({
 
   const handleRename = async (id: string) => {
     try {
-      await axios.post("/api/renameConnection", { id, newName });
+      await axios.put('/api/connections', { id, newName });
       setConnections((prev) =>
-        prev.map((conn) => (conn.id === id ? { ...conn, db: newName } : conn))
+        prev.map((conn) =>
+          conn.id === id ? { ...conn, name: newName } : conn
+        )
       );
-      setNewName("");
+      setNewName('');
       setEditId(null);
     } catch (error) {
-      alert("Failed to rename connection!");
+      alert('Failed to rename connection!');
     }
   };
+  
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.post("/api/deleteConnection", { id });
+      await axios.delete('/api/connections', { data: { id } });
       setConnections((prev) => prev.filter((conn) => conn.id !== id));
     } catch (error) {
-      alert("Failed to delete connection!");
+      alert('Failed to delete connection!');
     }
   };
 
