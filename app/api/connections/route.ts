@@ -32,8 +32,7 @@ export async function POST(request: Request) {
       const data = await fs.readFile(filePath, "utf-8");
       connections = JSON.parse(data);
     } catch (error) {
-      // File doesn't exist or can't be read, which is fine
-      // console.log("File doesn't exist or can't be read, which is fine");
+      // File doesn't exist or can't be read
       return NextResponse.json(
         {
           message:
