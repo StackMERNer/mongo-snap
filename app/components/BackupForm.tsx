@@ -41,7 +41,6 @@ const BackupForm: React.FC = () => {
       alert("Failed to save connection info!");
     }
   };
-  console.log('formData',formData);
   return (
     <div className="grid sm:grid-cols-[1fr,3fr]">
       <SavedConnections onConnectionSelect={(conn) => setFormData(conn)} />

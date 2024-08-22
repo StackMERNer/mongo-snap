@@ -58,3 +58,45 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const { id, newName } = await request.json();
+    const connections = JSON.parse(await fs.readFile(filePath, "utf-8"));
+
+    const updatedConnections = connections.map((conn: any) =>
+      conn.id === id ? { ...conn, name: newName } : conn
+    );
+
+    await fs.writeFile(filePath, JSON.stringify(updatedConnections, null, 2));
+
+    return NextResponse.json({ message: "Connection renamed!" });
+  } catch (error) {
+    console.error("Failed to rename connection:", error);
+    return NextResponse.json(
+      { message: "Failed to rename connection!" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+    const connections = JSON.parse(await fs.readFile(filePath, "utf-8"));
+
+    const updatedConnections = connections.filter(
+      (conn: any) => conn.id !== id
+    );
+
+    await fs.writeFile(filePath, JSON.stringify(updatedConnections, null, 2));
+
+    return NextResponse.json({ message: "Connection deleted!" });
+  } catch (error) {
+    console.error("Failed to delete connection:", error);
+    return NextResponse.json(
+      { message: "Failed to delete connection!" },
+      { status: 500 }
+    );
+  }
+}

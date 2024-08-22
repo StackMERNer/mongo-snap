@@ -1,4 +1,3 @@
-// app/page.tsx
 import BackupForm from "./components/BackupForm";
 
 const HomePage: React.FC = () => {
